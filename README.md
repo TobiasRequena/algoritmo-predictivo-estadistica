@@ -51,3 +51,25 @@ python main.py
 ```bash
 deactivate
 ```
+
+## Estructura del proyecto
+
+```bash
+├── data
+│   └── car_price_prediction.csv
+├── src
+│   ├── data_loader.py
+│   ├── preprocessing.py
+│   ├── models.py
+│   ├── evaluation.py
+│   └── visualization.py
+├── main.py
+├── README.md
+└── requirements.txt
+```
+
+- `data_loader.py`: Carga el dataset desde un archivo CSV.
+- `preprocessing.py`: Realiza preprocesamiento y limpieza de los datos.
+- `models.py`: Entrena modelos predictivos (regresión lineal y árbol de decisión).
+- `evaluation.py`: Evalúa los modelos y compara sus desempeños.
+- `visualization.py`: Genera gráficos y visualizaciones para analizar los datos.
