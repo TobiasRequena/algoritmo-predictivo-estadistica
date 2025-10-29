@@ -10,7 +10,7 @@ def main():
     print("🚗 Iniciando proyecto de predicción de precios de autos...\n")
 
     # 1. Cargar dataset
-    df = load_data("data/car_data.csv")
+    df = load_data("data/car_price_prediction.csv")
 
     # 2. Preparar datos
     X_train, X_test, y_train, y_test = prepare_data(df)

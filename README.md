@@ -43,7 +43,7 @@ pip freeze > requirements.txt
 ### 4. Ejecutar el script principal
 
 ```bash
-python main.py
+python ./src/main.py
 ```
 
 ### 5. Detener el entorno virtual
