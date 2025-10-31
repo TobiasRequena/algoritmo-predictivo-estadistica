@@ -12,8 +12,8 @@ def prepare_data(df: pd.DataFrame):
     df = pd.get_dummies(df, drop_first=True)
 
     # Separar variables (X = características, y = valor a predecir)
-    X = df.drop("Selling_Price", axis=1)
-    y = df["Selling_Price"]
+    X = df.drop("Price", axis=1)
+    y = df["Price"]
 
     # Dividir en entrenamiento y prueba (80% - 20%)
     X_train, X_test, y_train, y_test = train_test_split(
