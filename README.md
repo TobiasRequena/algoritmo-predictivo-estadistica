@@ -73,3 +73,30 @@ deactivate
 - `models.py`: Entrena modelos predictivos (regresión lineal y árbol de decisión).
 - `evaluation.py`: Evalúa los modelos y compara sus desempeños.
 - `visualization.py`: Genera gráficos y visualizaciones para analizar los datos.
+
+## Dataset
+
+https://www.kaggle.com/datasets/deepcontractor/car-price-prediction-challenge
+
+Archivo CSV con **19.237 filas** y **18 columnas**. La variable objetivo es **Price**.
+
+### Atributos
+
+- ID
+- Price
+- Levy
+- Manufacturer
+- Model
+- Prod. year
+- Category
+- Leather interior
+- Fuel type
+- Engine volume
+- Mileage
+- Cylinders
+- Gear box type
+- Drive wheels
+- Doors
+- Wheel
+- Color
+- Airbags
