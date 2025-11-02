@@ -3,8 +3,7 @@
 from data_loader import load_data
 from preprocessing import clean_data, prepare_data
 from models import train_all_models, save_results_summary
-from visualization import plot_results, plot_feature_importance
-
+from visualization import plot_results, plot_feature_importance, plot_predictions
 
 def main():
     # 1. Cargar dataset
@@ -25,6 +24,10 @@ def main():
     # 4. Evaluar y graficar resultados
     plot_results()
     plot_feature_importance("models/decision_tree.pkl", X_train.columns)
+
+    # 5. Graficar dispersión de predicciones
+    plot_predictions("models/linear_regression.pkl", X_test, y_test, "Regresión Lineal")
+    plot_predictions("models/decision_tree.pkl", X_test, y_test, "Árbol de Decisión")
 
     print("\n✅ Proceso finalizado correctamente.")
 

@@ -58,3 +58,29 @@ def plot_feature_importance(model_path="models/decision_tree.pkl", feature_names
     plt.close()
 
     print("✅ Gráfico de importancia de variables guardado en /results/feature_importance_tree.png")
+
+def plot_predictions(model_path, X_test, y_test, model_name):
+    """Grafica valores reales vs predichos para un modelo de regresión"""
+    model = joblib.load(model_path)
+
+    # Predicciones
+    y_pred_log = model.predict(X_test)
+    y_pred = np.expm1(y_pred_log)
+    y_real = np.expm1(y_test)
+
+    # Gráfico
+    plt.figure(figsize=(6, 6))
+    plt.scatter(y_real, y_pred, alpha=0.4, color="#2196F3")
+    plt.plot([y_real.min(), y_real.max()],
+             [y_real.min(), y_real.max()],
+             'r--', linewidth=2)
+    plt.xlabel("Precio Real (USD)")
+    plt.ylabel("Precio Predicho (USD)")
+    plt.title(f"Predicción vs Real – {model_name}")
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.savefig(f"results/{model_name.lower().replace(' ', '_')}_pred_vs_real.png",
+                bbox_inches="tight")
+    plt.close()
+
+    print(f"✅ Gráfico guardado: results/{model_name.lower().replace(' ', '_')}_pred_vs_real.png")
