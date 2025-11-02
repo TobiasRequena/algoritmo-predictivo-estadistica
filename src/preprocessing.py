@@ -27,7 +27,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
 
     # 4. Corrección de tipos numéricos
     df['Price'] = df['Price'].astype(str).str.replace(',', '').astype(float)
-    df['Levy'] = df['Levy'].astype(str).str.replace('—', '0').astype(float)
+    df['Levy'] = df['Levy'].replace(['—', '-', 'None', 'nan'], 0).astype(float)
     df['Prod. year'] = df['Prod. year'].astype(int)
     df['Mileage'] = df['Mileage'].astype(str).str.replace(' km', '').astype(float)
     df['Engine volume'] = df['Engine volume'].astype(str).str.replace(' Turbo', '').astype(float)
@@ -40,7 +40,6 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     # 6. Completar valores nulos
     for col in df.select_dtypes(include=[np.number]).columns:
         df[col] = df[col].fillna(df[col].median())
-
     for col in df.select_dtypes(include=['object']).columns:
         df[col] = df[col].fillna(df[col].mode()[0])
 
@@ -52,10 +51,22 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df.drop(columns=columns_to_drop, inplace=True, errors='ignore')
     print(f"🧾 Columnas eliminadas: {columns_to_drop}")
 
-    # 8. Mostrar resumen final
+    # 8. Reducir cardinalidad
+    def limit_categories(df, column, top_n=10):
+        top = df[column].value_counts().index[:top_n]
+        df[column] = df[column].where(df[column].isin(top), 'Other')
+        return df
+
+    df = limit_categories(df, 'Manufacturer', 15)
+    df = limit_categories(df, 'Color', 10)
+    df = limit_categories(df, 'Category', 10)
+
+    # 8. Aplicar log-transformación
+    df['Price'] = np.log1p(df['Price'])
+
+    # 9. Mostrar resumen final
     print(f"📊 Dimensiones antes: {initial_shape}, después: {df.shape}")
     print("✅ LIMPIEZA COMPLETA")
-
     return df
 
 
