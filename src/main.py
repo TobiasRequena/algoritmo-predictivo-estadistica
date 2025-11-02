@@ -2,7 +2,7 @@
 
 from data_loader import load_data
 from preprocessing import clean_data, prepare_data
-from models import train_linear_model, train_tree_model
+from models import train_all_models, save_results_summary
 from evaluation import compare_models
 
 
@@ -17,8 +17,12 @@ def main():
     X_train, X_test, y_train, y_test = prepare_data(df_clean)
 
     # 3. Entrenar modelos
-    # model_lr, metrics_lr = train_linear_model(X_train, X_test, y_train, y_test)
-    # model_tree, metrics_tree = train_tree_model(X_train, X_test, y_train, y_test)
+    results = train_all_models(X_train, X_test, y_train, y_test)
+    save_results_summary(results)
+
+    print("\n📊 Comparación de modelos:")
+    for name, (r2, mae) in results.items():
+        print(f" - {name:<20} R²: {r2:.3f} | MAE: {mae:.3f}")
 
     # 4. Evaluar resultados
     # compare_models(metrics_lr, metrics_tree)

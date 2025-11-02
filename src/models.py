@@ -4,6 +4,9 @@ from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor, plot_tree
 from sklearn.metrics import r2_score, mean_absolute_error
 import matplotlib.pyplot as plt
+import pandas as pd
+import joblib
+import os
 
 def train_linear_model(X_train, X_test, y_train, y_test):
     """Entrena un modelo de regresión lineal"""
@@ -56,3 +59,41 @@ def train_tree_model(X_train, X_test, y_train, y_test):
     plt.show()
 
     return model, (r2, mae)
+
+def save_model(model, name, metrics):
+    """Guarda el modelo entrenado y sus métricas"""
+    os.makedirs("models", exist_ok=True)
+    model_path = f"models/{name}.pkl"
+    metrics_path = f"models/{name}_metrics.txt"
+
+    # Guardar modelo entrenado
+    joblib.dump(model, model_path)
+
+    # Guardar métricas
+    with open(metrics_path, "w") as f:
+        f.write(f"R²: {metrics[0]:.3f}\nMAE: {metrics[1]:.3f}\n")
+
+    print(f"💾 Modelo guardado en: {model_path}")
+    print(f"📊 Métricas guardadas en: {metrics_path}\n")
+
+def save_results_summary(results, filename="results/summary.csv"):
+    os.makedirs("results", exist_ok=True)
+    df = pd.DataFrame([
+        {"Modelo": name, "R2": r2, "MAE": mae}
+        for name, (r2, mae) in results.items()
+    ])
+    df.to_csv(filename, index=False)
+    print(f"📈 Resultados guardados en {filename}")
+
+def train_all_models(X_train, X_test, y_train, y_test):
+    results = {}
+
+    linear_model, linear_metrics = train_linear_model(X_train, X_test, y_train, y_test)
+    results["Regresión Lineal"] = linear_metrics
+    save_model(linear_model, "linear_regression", linear_metrics)
+
+    tree_model, tree_metrics = train_tree_model(X_train, X_test, y_train, y_test)
+    results["Árbol de Decisión"] = tree_metrics
+    save_model(tree_model, "decision_tree", tree_metrics)
+
+    return results
