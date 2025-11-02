@@ -1,13 +1,14 @@
 # ENTRENAMIENTO DE MODELOS PREDICTIVOS
 
 from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeRegressor, plot_tree
+from sklearn.tree import DecisionTreeRegressor, plot_tree, export_graphviz
 from sklearn.metrics import r2_score, mean_absolute_error
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import joblib
 import os
+import graphviz
 
 def train_linear_model(X_train, X_test, y_train, y_test):
     """Entrena un modelo de regresión lineal"""
@@ -68,17 +69,31 @@ def train_tree_model(X_train, X_test, y_train, y_test):
         print(f"   {feature:<25} {importance:.3f}")
 
     # 🌳 Visualización del árbol (solo si el dataset no es muy grande)
-    plt.figure(figsize=(16, 10))
+    plt.figure(figsize=(24, 12))
     plot_tree(
         model,
         filled=True,
         feature_names=X_train.columns,
         rounded=True,
-        fontsize=8
+        fontsize=10,
+        max_depth=3   # 👈 solo muestra los primeros niveles
     )
-    plt.title("Árbol de Decisión – Predicción de precios de autos")
-    plt.savefig("results/decision_tree.png", bbox_inches="tight")
+    plt.title("Árbol de Decisión – Predicción de precios de autos (resumen)")
+    plt.savefig("results/decision_tree_summary.png", bbox_inches="tight")
     plt.close()
+
+    dot_data = export_graphviz(
+        model,
+        out_file=None,
+        feature_names=X_train.columns,
+        filled=True,
+        rounded=True,
+        max_depth=6,
+        proportion=True
+    )
+
+    graph = graphviz.Source(dot_data)
+    graph.render("results/decision_tree", format="png", cleanup=True)
 
     return model, {
         "r2_log": r2_log,
