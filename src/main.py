@@ -4,6 +4,7 @@ from data_loader import load_data
 from preprocessing import clean_data, prepare_data
 from models import train_all_models, save_results_summary
 from evaluation import compare_models
+from visualization import plot_results, plot_feature_importance
 
 
 def main():
@@ -22,8 +23,9 @@ def main():
     for name, m in results.items():
         print(f" - {name:<20} R²(log): {m['r2_log']:.3f} | R²(real): {m['r2_real']:.3f} | MAE(USD): {m['mae_real']:.2f}")
 
-    # 4. Evaluar resultados
-    # compare_models(metrics_lr, metrics_tree)
+    # 4. Evaluar y graficar resultados
+    plot_results()
+    plot_feature_importance("models/decision_tree.pkl", X_train.columns)
 
     print("\n✅ Proceso finalizado correctamente.")
 
