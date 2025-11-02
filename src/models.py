@@ -56,7 +56,8 @@ def train_tree_model(X_train, X_test, y_train, y_test):
         fontsize=8
     )
     plt.title("Árbol de Decisión – Predicción de precios de autos")
-    plt.show()
+    plt.savefig("results/decision_tree.png", bbox_inches="tight")
+    plt.close()
 
     return model, (r2, mae)
 
