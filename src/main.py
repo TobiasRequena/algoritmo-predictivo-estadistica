@@ -3,7 +3,6 @@
 from data_loader import load_data
 from preprocessing import clean_data, prepare_data
 from models import train_all_models, save_results_summary
-from evaluation import compare_models
 from visualization import plot_results, plot_feature_importance
 
 
