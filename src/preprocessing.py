@@ -47,12 +47,20 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     total_nulls_after = df.isnull().sum().sum()
     print(f"✅ Se completaron los valores nulos (antes: {total_nulls_before}, ahora: {total_nulls_after})")
 
-    # 7. Eliminar columnas irrelevantes
+    # 7. Eliminar outliers en la variable objetivo (Price)
+    q1, q99 = df["Price"].quantile([0.01, 0.99])
+    before = df.shape[0]
+    df = df[(df["Price"] >= q1) & (df["Price"] <= q99)]
+    after = df.shape[0]
+    removed = before - after
+    print(f"⚖️ Se eliminaron {removed} outliers en 'Price' (fuera del rango {q1:,.0f} - {q99:,.0f} USD).")
+
+    # 8. Eliminar columnas irrelevantes
     columns_to_drop = ['ID', 'Model']
     df.drop(columns=columns_to_drop, inplace=True, errors='ignore')
     print(f"🧾 Columnas eliminadas: {columns_to_drop}")
 
-    # 8. Reducir cardinalidad
+    # 9. Reducir cardinalidad
     def limit_categories(df, column, top_n=10):
         top = df[column].value_counts().index[:top_n]
         df[column] = df[column].where(df[column].isin(top), 'Other')
@@ -62,10 +70,10 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = limit_categories(df, 'Color', 10)
     df = limit_categories(df, 'Category', 10)
 
-    # 8. Aplicar log-transformación
+    # 10. Aplicar log-transformación
     df['Price'] = np.log1p(df['Price'])
 
-    # 9. Mostrar resumen final
+    # 11. Mostrar resumen final
     print(f"📊 Dimensiones antes: {initial_shape}, después: {df.shape}")
     print("✅ LIMPIEZA COMPLETA")
     return df
