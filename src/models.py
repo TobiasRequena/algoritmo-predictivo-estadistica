@@ -5,6 +5,7 @@ from sklearn.tree import DecisionTreeRegressor, plot_tree
 from sklearn.metrics import r2_score, mean_absolute_error
 import matplotlib.pyplot as plt
 import pandas as pd
+import numpy as np
 import joblib
 import os
 
@@ -16,25 +17,45 @@ def train_linear_model(X_train, X_test, y_train, y_test):
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    r2 = r2_score(y_test, y_pred)
-    mae = mean_absolute_error(y_test, y_pred)
+    # Métricas en escala logarítmica
+    r2_log = r2_score(y_test, y_pred)
 
-    print(f"   → R²: {r2:.3f}, MAE: {mae:.3f}")
-    return model, (r2, mae)
+    # Reconvertir a escala original (precio real)
+    y_test_real = np.expm1(y_test)
+    y_pred_real = np.expm1(y_pred)
+
+    # Métricas en escala real
+    r2_real = r2_score(y_test_real, y_pred_real)
+    mae_real = mean_absolute_error(y_test_real, y_pred_real)
+
+    print(f"   → R² (log): {r2_log:.3f}, R² (real): {r2_real:.3f}, MAE (USD): {mae_real:,.2f}")
+    return model, {
+        "r2_log": r2_log,
+        "r2_real": r2_real,
+        "mae_real": mae_real
+    }
 
 
 def train_tree_model(X_train, X_test, y_train, y_test):
     """Entrena un modelo de árbol de decisión"""
     print("\n🌳 Entrenando modelo: Árbol de Decisión...")
 
-    model = DecisionTreeRegressor(max_depth=3, random_state=42)
+    model = DecisionTreeRegressor(max_depth=6, min_samples_split=20, random_state=42)
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 
-    r2 = r2_score(y_test, y_pred)
-    mae = mean_absolute_error(y_test, y_pred)
+    # Métricas en escala logarítmica
+    r2_log = r2_score(y_test, y_pred)
 
-    print(f"   → R²: {r2:.3f}, MAE: {mae:.3f}")
+    # Reconvertir a escala original (precio real)
+    y_test_real = np.expm1(y_test)
+    y_pred_real = np.expm1(y_pred)
+
+    # Métricas en escala real
+    r2_real = r2_score(y_test_real, y_pred_real)
+    mae_real = mean_absolute_error(y_test_real, y_pred_real)
+
+    print(f"   → R² (log): {r2_log:.3f}, R² (real): {r2_real:.3f}, MAE (USD): {mae_real:,.2f}")
 
     # 🔍 Mostrar las características más importantes
     importances = sorted(
@@ -59,7 +80,11 @@ def train_tree_model(X_train, X_test, y_train, y_test):
     plt.savefig("results/decision_tree.png", bbox_inches="tight")
     plt.close()
 
-    return model, (r2, mae)
+    return model, {
+        "r2_log": r2_log,
+        "r2_real": r2_real,
+        "mae_real": mae_real
+    }
 
 def save_model(model, name, metrics):
     """Guarda el modelo entrenado y sus métricas"""
@@ -79,9 +104,15 @@ def save_model(model, name, metrics):
 
 def save_results_summary(results, filename="results/summary.csv"):
     os.makedirs("results", exist_ok=True)
+
     df = pd.DataFrame([
-        {"Modelo": name, "R2": r2, "MAE": mae}
-        for name, (r2, mae) in results.items()
+        {
+            "Modelo": name,
+            "R2 (log)": metrics["r2_log"],
+            "R2 (real)": metrics["r2_real"],
+            "MAE (USD)": metrics["mae_real"]
+        }
+        for name, metrics in results.items()
     ])
     df.to_csv(filename, index=False)
     print(f"📈 Resultados guardados en {filename}")
@@ -89,12 +120,14 @@ def save_results_summary(results, filename="results/summary.csv"):
 def train_all_models(X_train, X_test, y_train, y_test):
     results = {}
 
+    # Regresión Lineal
     linear_model, linear_metrics = train_linear_model(X_train, X_test, y_train, y_test)
     results["Regresión Lineal"] = linear_metrics
-    save_model(linear_model, "linear_regression", linear_metrics)
+    save_model(linear_model, "linear_regression", (linear_metrics["r2_real"], linear_metrics["mae_real"]))
 
+    # Árbol de Decisión
     tree_model, tree_metrics = train_tree_model(X_train, X_test, y_train, y_test)
     results["Árbol de Decisión"] = tree_metrics
-    save_model(tree_model, "decision_tree", tree_metrics)
+    save_model(tree_model, "decision_tree", (tree_metrics["r2_real"], tree_metrics["mae_real"]))
 
     return results

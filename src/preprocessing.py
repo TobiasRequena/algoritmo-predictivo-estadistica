@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     """Limpieza básica: valores nulos, tipos y columnas irrelevantes"""
@@ -88,6 +89,12 @@ def prepare_data(df: pd.DataFrame):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
+
+    # 4. Normalizar solo las columnas numéricas
+    num_cols = X_train.select_dtypes(include=['float64', 'int64']).columns
+    scaler = StandardScaler()
+    X_train[num_cols] = scaler.fit_transform(X_train[num_cols])
+    X_test[num_cols] = scaler.transform(X_test[num_cols])
 
     print("✅ DATOS PREPARADOS CORRECTAMENTE")
     print(f"Entrenamiento: {X_train.shape}, Prueba: {X_test.shape}")

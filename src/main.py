@@ -7,8 +7,6 @@ from evaluation import compare_models
 
 
 def main():
-    print("🚗 Iniciando proyecto de predicción de precios de autos...\n")
-
     # 1. Cargar dataset
     df = load_data("data/car_price_prediction.csv")
 
@@ -21,8 +19,8 @@ def main():
     save_results_summary(results)
 
     print("\n📊 Comparación de modelos:")
-    for name, (r2, mae) in results.items():
-        print(f" - {name:<20} R²: {r2:.3f} | MAE: {mae:.3f}")
+    for name, m in results.items():
+        print(f" - {name:<20} R²(log): {m['r2_log']:.3f} | R²(real): {m['r2_real']:.3f} | MAE(USD): {m['mae_real']:.2f}")
 
     # 4. Evaluar resultados
     # compare_models(metrics_lr, metrics_tree)
