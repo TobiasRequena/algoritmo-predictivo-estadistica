@@ -41,7 +41,7 @@ def train_tree_model(X_train, X_test, y_train, y_test):
     """Entrena un modelo de árbol de decisión"""
     print("\n🌳 Entrenando modelo: Árbol de Decisión...")
 
-    model = DecisionTreeRegressor(max_depth=6, min_samples_split=20, random_state=42)
+    model = DecisionTreeRegressor(max_depth=16, min_samples_split=20, random_state=63)
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
 

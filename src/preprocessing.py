@@ -48,7 +48,7 @@ def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     print(f"✅ Se completaron los valores nulos (antes: {total_nulls_before}, ahora: {total_nulls_after})")
 
     # 7. Eliminar outliers en la variable objetivo (Price)
-    q1, q99 = df["Price"].quantile([0.01, 0.99])
+    q1, q99 = df["Price"].quantile([0.10, 0.90])
     before = df.shape[0]
     df = df[(df["Price"] >= q1) & (df["Price"] <= q99)]
     after = df.shape[0]
