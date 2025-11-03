@@ -88,7 +88,7 @@ def train_tree_model(X_train, X_test, y_train, y_test):
         feature_names=X_train.columns,
         filled=True,
         rounded=True,
-        max_depth=6,
+        max_depth=16,
         proportion=True
     )
 
